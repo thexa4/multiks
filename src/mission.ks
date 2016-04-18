@@ -11,22 +11,30 @@ copy warputils from 0.
 copy service from 0.
 copy maneuver from 0.
 
-//run once ascent.
-//run once atmoland.
-//run once orbitutils.
-
+run once ascent.
+run once atmoland.
 run once warputils.
 
 os["instance"]["init"]().
-local tgt to time:seconds + 60000.
 
-function calcdiff {
-	print tgt - time:seconds.
+function doScience {
+	toggle brakes.
 }
 
-local lt1 to warpManager["instance"]["warpTo"](tgt).
-start(lt1).
+local ascentObj to ascent["new"]().
+local landObj to atmoland["new"]().
 
-lt1["continueWith"](task["create"](calcdiff@, "diff")).
+local ascentTask to ascentObj["start"](100000).
+local warpTask to warpmanager["instance"]["warpTo"](time:seconds + 1000).
+local scienceTask to task["create"](doScience@, "science").
+local landTask to landObj["start"]().
+local scienceTask2 to task["create"](doScience@, "science").
+
+ascentTask["continueWith"](warpTask).
+warpTask["continueWith"](scienceTask).
+scienceTask["continueWith"](landTask).
+landTask["continueWith"](scienceTask2).
+
+start(ascentTask).
 
 os["instance"]["start"]().

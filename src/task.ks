@@ -251,7 +251,7 @@ function object_concurrent {
 	
 	// Bind concurrent methods
 	for key in concurrent:keys {
-		print key.
+		
 		local argsize to concurrent[key][1].
 		local encap to "unencapsulated".
 		
